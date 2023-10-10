@@ -128,6 +128,9 @@ class Upgrader with WidgetsBindingObserver {
   /// [UpgradeDialogStyle.cupertino]. Optional.
   TextStyle? cupertinoButtonTextStyle;
 
+  /// The alignment for the action buttons. Optional.
+  MainAxisAlignment? buttonsAlignment;
+
   /// The button style for the text dialog buttons. Optional.
   ButtonStyle? buttonStyle;
 
@@ -193,6 +196,7 @@ class Upgrader with WidgetsBindingObserver {
     this.minAppVersion,
     this.dialogStyle = UpgradeDialogStyle.material,
     this.cupertinoButtonTextStyle,
+    this.buttonsAlignment,
     this.buttonStyle,
     UpgraderOS? upgraderOS,
   })  : client = client ?? http.Client(),
@@ -718,14 +722,15 @@ class Upgrader with WidgetsBindingObserver {
       _button(cupertino, messages.message(UpgraderMessage.buttonTitleUpdate), context, () => onUserUpdated(context, !blocked())),
     ];
 
-    return cupertino
-        ? CupertinoAlertDialog(title: textTitle, content: content, actions: actions)
-        : AlertDialog(
-            title: textTitle,
-            content: content,
-            actions: actions,
-            // actionsAlignment: MainAxisAlignment.spaceEvenly,
-          );
+    if (cupertino) {
+      return CupertinoAlertDialog(title: textTitle, content: content, actions: actions);
+    }
+
+    return AlertDialog(
+      title: textTitle,
+      content: content,
+      actions: actions,
+      actionsAlignment: buttonsAlignment);
   }
 
   Widget _button(bool cupertino, String? text, BuildContext context, VoidCallback? onPressed) {
